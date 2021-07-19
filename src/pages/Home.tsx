@@ -6,15 +6,29 @@ const Home: FC<any> = (): ReactElement => {
 
     return (
         <HomeScreenWrapper>
-            Home Screen
+            <button>Login to Github</button>
         </HomeScreenWrapper>
     );
 }
 
 
 const HomeScreenWrapper = styled.div`
-    color: 'red';
-    font-size: 40px;
+    color: red;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    button{
+        all: unset;
+        color: #ffffff;
+        background: #5C5C5C;
+        border-radius: 5px;
+        width: 179px;
+        height: 50px;
+        text-align: center;
+    }
 `;
 
 
