@@ -197,7 +197,7 @@ const Results: FC<any> = (): ReactElement => {
                                             <h4>{repo.name}</h4>
                                             <p>{repo.description}</p>
                                             <p className="other-details">
-                                                <span>{transformCount(repo.stargazerCount)}Stars | </span>
+                                                <span>{transformCount(repo.stargazerCount)} stars | </span>
                                                 <span>{repo.languages?.nodes[0]?.name && (`${repo.languages.nodes[0].name} | `)}</span>
                                                 <span>{repo?.licenseInfo?.name && (`${repo.licenseInfo.name} | `)}</span>
                                                 <span>Updated {convertDateToString(repo.updatedAt)} ago</span>  
