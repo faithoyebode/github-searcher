@@ -3,6 +3,8 @@ import { useLocation, useHistory } from 'react-router-dom';
 import { gql, useQuery, useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import Header from 'components/Header';
+import previousArrow from 'assets/icons/previousArrow.svg';
+
 
 const REPOS_QUERY = gql`
 query search($text: String!){
@@ -132,27 +134,51 @@ const Results: FC<any> = (): ReactElement => {
                     )
                     }
                     {
-                        resultState === "repositories" && reposData && reposData.search.nodes.map((repo: any, i: number) => (
-                            <div className="repo-card" key={i+1}>
-                                <h4>{repo.name}</h4>
-                                <p>{repo.description}</p>
-                                <p className="other-details">
-                                    <span>17.2k Stars | </span>
-                                    <span>Java | </span>
-                                    <span>GPL 2.0 License | </span>
-                                    <span>Updated 4 hours ago</span>
-                                </p>
-                            </div>
-                        ))
+                        resultState === "repositories" && reposData && (
+                            <>
+                                {
+                                    reposData.search.nodes.map((repo: any, i: number) => (
+                                        <div className="repo-card" key={i+1}>
+                                            <h4>{repo.name}</h4>
+                                            <p>{repo.description}</p>
+                                            <p className="other-details">
+                                                <span>17.2k Stars | </span>
+                                                <span>Java | </span>
+                                                <span>GPL 2.0 License | </span>
+                                                <span>Updated 4 hours ago</span>
+                                            </p>
+                                        </div>
+                                    ))
+                                }
+                                <div className="repo-btns-section">
+                                    <div className="repo-btns">
+                                        <button className="prev"><img src={previousArrow} alt="previous" /></button>
+                                        <button className="next"><img src={previousArrow} alt="next" /></button>
+                                    </div>
+                                </div>
+                            </>
+                            )
                     }
 
                     {
-                        resultState === "users" && usersData && usersData.search.nodes.map((user: any, i: number) => (
-                            <div className="user-card">
-                                <h4><span>{user.name}</span> <span className="sub-name">{user.location}</span></h4>
-                                <p className="description">{user.bio}</p>
+                        resultState === "users" && usersData && (
+                        <>
+                            {  
+                                usersData.search.nodes.map((user: any, i: number) => (
+                                    <div className="user-card">
+                                        <h4><span>{user.name}</span> <span className="sub-name">{user.location}</span></h4>
+                                        <p className="description">{user.bio}</p>
+                                    </div>
+                                ))
+                            }
+                            <div className="user-btns-section">  
+                                <div className="user-btns">
+                                    <button className="prev"><img src={previousArrow} alt="previous" /></button>
+                                    <button className="next"><img src={previousArrow} alt="next" /></button>
+                                </div>
                             </div>
-                        ))
+                        </>
+                        )
                     }
                 </div>
             </div>
@@ -230,6 +256,52 @@ const ResultsScreenWrapper = styled.div`
             }
 
         }
+        
+        div.repo-btns-section{
+            position: absolute;
+            left: 0;
+            width: 100%;
+            background: #ffffff;
+            display: flex;
+            justify-content: flex-end;
+            padding-right: 17%;
+            padding-top: 10px;
+
+            .repo-btns{
+                display: block;
+                width: 100px;
+                height: 40px;
+                display: flex;
+                justify-content: space-between;
+
+                button{
+                    all: unset;
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 10px;
+                    background: #F3F3F3;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    &:hover{
+                        background: #000000;
+                    }
+
+                    img{
+                        height: 12px;
+                        width: 6px;
+                        fill: #ffffff;
+                    }
+
+                    &.next{
+                        img{
+                            transform: rotateZ(180deg);
+                        }
+                    }
+                }
+            }
+        }
 
         .user-card{
             height: 85px;
@@ -250,6 +322,52 @@ const ResultsScreenWrapper = styled.div`
             }
             .description{
 
+            }
+        }
+
+        div.user-btns-section{
+            position: absolute;
+            left: 0;
+            width: 100%;
+            background: #ffffff;
+            display: flex;
+            justify-content: flex-end;
+            padding-right: 17%;
+            padding-top: 10px;
+
+            .user-btns{
+                display: block;
+                width: 100px;
+                height: 40px;
+                display: flex;
+                justify-content: space-between;
+
+                button{
+                    all: unset;
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 10px;
+                    background: #F3F3F3;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    &:hover{
+                        background: #000000;
+                    }
+
+                    img{
+                        height: 12px;
+                        width: 6px;
+                        fill: #ffffff;
+                    }
+
+                    &.next{
+                        img{
+                            transform: rotateZ(180deg);
+                        }
+                    }
+                }
             }
         }
     }
