@@ -7,7 +7,9 @@ const App: FC<any> = (): ReactElement => {
   return (
     <div className="App">
       <Router>
-        <Pages />
+        <div>
+          <Pages />
+        </div>
       </Router>
     </div>
   );
