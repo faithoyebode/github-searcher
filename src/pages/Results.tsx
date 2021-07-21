@@ -5,6 +5,15 @@ import styled from '@emotion/styled';
 import Header from 'components/Header';
 import previousArrow from 'assets/icons/previousArrow.svg';
 
+interface UsersVars {
+    text: string,
+    after?: string,
+    before?: string 
+};
+
+interface UsersData {
+    search: any;
+}
 
 const REPOS_QUERY = gql`
 query search($text: String!){
@@ -39,8 +48,8 @@ query search($text: String!){
 
 
 const USERS_QUERY = gql`
-query search($text: String!){
-    search(query: $text, type: USER, first: 10) {
+query search($text: String!, $after: String, $before: String){
+    search(query: $text, type: USER, first: 10, after: $after, before: $before) {
       repositoryCount
       userCount
       nodes {
@@ -51,6 +60,10 @@ query search($text: String!){
           location
         }
       }
+      pageInfo {
+        endCursor
+        startCursor
+      }
     }
 }
 `; 
@@ -59,8 +72,8 @@ query search($text: String!){
 const Results: FC<any> = (): ReactElement => {
     const history = useHistory();
     const search = useLocation().search;
-    const searchQuery = new URLSearchParams(search).get('search');
-    const [searchText, setSearchText] = useState(searchQuery);
+    const searchQuery: any = new URLSearchParams(search).get('search');  
+    const [searchText, setSearchText] = useState<string>(searchQuery);
     const [resultState, setResultState] = useState<"users" | "repositories">("repositories");
     const [reposState, setReposState] =  useState({});
 
@@ -73,7 +86,7 @@ const Results: FC<any> = (): ReactElement => {
 
     console.log(reposData);
 
-    const { loading: usersLoading, error: usersError, data: usersData, refetch: usersRefetch } = useQuery(USERS_QUERY, {
+    const { loading: usersLoading, error: usersError, data: usersData, refetch: usersRefetch } = useQuery<UsersData, UsersVars>(USERS_QUERY, {
         variables: {
             text: searchText
         }
@@ -106,7 +119,49 @@ const Results: FC<any> = (): ReactElement => {
         setSearchText(e.target.value);
     }
 
-    
+    const handleUsersPrev = (e: any) => {
+        let value: string = e.target.value;
+        usersRefetch({
+            before: value
+        });
+    }
+
+    const handleUsersNext = (e: any) => {
+        let value: string = e.target.value;
+        usersRefetch({
+            after: value
+        }); 
+    }
+
+    const convertDateToString = (iso: string): string => {
+        let isoDate = new Date(iso);
+
+        let seconds = Math.floor((new Date().valueOf() - isoDate.valueOf()) / 1000);
+
+        let interval = seconds / 31536000;
+
+        if (interval > 1) {
+            return Math.floor(interval) + " years";
+        }
+        interval = seconds / 2592000;
+        if (interval > 1) {
+            return Math.floor(interval) + " months";
+        }
+        interval = seconds / 86400;
+        if (interval > 1) {
+            return Math.floor(interval) + " days";
+        }
+        interval = seconds / 3600;
+        if (interval > 1) {
+            return Math.floor(interval) + " hours";
+        }
+        interval = seconds / 60;
+        if (interval > 1) {
+            return Math.floor(interval) + " minutes";
+        }
+        return Math.floor(seconds) + " seconds";
+        
+    }
 
 
     return (
@@ -142,10 +197,10 @@ const Results: FC<any> = (): ReactElement => {
                                             <h4>{repo.name}</h4>
                                             <p>{repo.description}</p>
                                             <p className="other-details">
-                                                <span>17.2k Stars | </span>
-                                                <span>Java | </span>
-                                                <span>GPL 2.0 License | </span>
-                                                <span>Updated 4 hours ago</span>
+                                                <span>{transformCount(repo.stargazerCount)}Stars | </span>
+                                                <span>{repo.languages?.nodes[0]?.name && (`${repo.languages.nodes[0].name} | `)}</span>
+                                                <span>{repo?.licenseInfo?.name && (`${repo.licenseInfo.name} | `)}</span>
+                                                <span>Updated {convertDateToString(repo.updatedAt)} ago</span>  
                                             </p>
                                         </div>
                                     ))
@@ -165,7 +220,7 @@ const Results: FC<any> = (): ReactElement => {
                         <>
                             {  
                                 usersData.search.nodes.map((user: any, i: number) => (
-                                    <div className="user-card">
+                                    <div className="user-card" key={i+1}>
                                         <h4><span>{user.name}</span> <span className="sub-name">{user.location}</span></h4>
                                         <p className="description">{user.bio}</p>
                                     </div>
@@ -173,8 +228,8 @@ const Results: FC<any> = (): ReactElement => {
                             }
                             <div className="user-btns-section">  
                                 <div className="user-btns">
-                                    <button className="prev"><img src={previousArrow} alt="previous" /></button>
-                                    <button className="next"><img src={previousArrow} alt="next" /></button>
+                                    <button className="prev" value={usersData.search.pageInfo.startCursor} onClick={handleUsersPrev}><img src={previousArrow} alt="previous" /></button>
+                                    <button className="next" value={usersData.search.pageInfo.endCursor}><img src={previousArrow} onClick={handleUsersNext} alt="next" /></button>
                                 </div>
                             </div>
                         </>

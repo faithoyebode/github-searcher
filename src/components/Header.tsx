@@ -1,5 +1,6 @@
 import React, { FC, ReactElement }  from 'react';
 import { gql, useApolloClient } from '@apollo/client';
+import { useHistory } from 'react-router-dom';
 import styled from '@emotion/styled';
 import Logo from 'assets/icons/logo.svg';
 import SearchIcon from 'assets/icons/search.svg';
@@ -24,6 +25,13 @@ const Header: FC<any> = ({ searchText, handleTextChange, handleTextSubmit }): Re
 
     const userInfo = client.readQuery({ query:  USER_INFO_QUERY });
 
+    const history = useHistory();
+
+    const handleLogout = () => {
+        localStorage.removeItem("searcherToken");
+        history.push('/');
+    }
+    
     return (
         <HeaderWrapper>
             <img src={Logo} alt="github logo" className="logo" />
@@ -36,7 +44,9 @@ const Header: FC<any> = ({ searchText, handleTextChange, handleTextSubmit }): Re
                     <img src={userInfo && userInfo.viewer.avatarUrl} alt="profile" />
                     <button className="reveal-logout"><span>{userInfo && userInfo.viewer.name}</span><img src={dropdown} alt="profile"  /></button>
                 </div>
-                <div className="logout-btn">Logout</div>
+                <div className="logout-btn">
+                    <button onClick={handleLogout}>Logout</button>
+                </div>
             </div>
         </HeaderWrapper>
     )
@@ -150,6 +160,10 @@ const HeaderWrapper = styled.div`
                 border-right: 12px solid transparent;
                 border-left: 12px solid transparent;
                 border-bottom: 30px solid red;
+            }
+
+            &:hover{
+                opacity: 0.7;
             }
         }
     }

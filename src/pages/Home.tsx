@@ -16,7 +16,7 @@ const Home: FC<any> = (): ReactElement => {
             setLoading(true);
             console.log("code: ", code);
 
-            fetch(`https://faith-github-proxy.herokuapp.com/authenticate/${code}`).then(
+            fetch(`${process.env.REACT_APP_PROXY_SERVER}/${code}`).then(
                 response => response.json()
             ).then((data) => {
                 setToken(data.token);

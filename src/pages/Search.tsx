@@ -22,6 +22,12 @@ const Search: FC<any> = (): ReactElement => {
 
     const [searchText, setSearchText] = useState<string>("");
     const history = useHistory();
+
+    const handleLogout = () => {
+        localStorage.removeItem("searcherToken");
+        history.push('/');
+    }
+
     const handleSearch = (e: any): void => {
         setSearchText(e.target.value);
     }
@@ -32,10 +38,7 @@ const Search: FC<any> = (): ReactElement => {
             history.push(`/results?search=${searchText}`);
         }
     }
-    // useEffect(() => {
-    //     console.log(data);
-    // }, []);
-
+    
     return (
         <SearchScreenWrapper>
             <div className="header">
@@ -47,7 +50,7 @@ const Search: FC<any> = (): ReactElement => {
                         </div>
                         <div className="logout-box">
                             <div>
-                                <button>Logout</button>
+                                <button onClick={handleLogout}>Logout</button>
                             </div>
                         </div>
                     </div>
